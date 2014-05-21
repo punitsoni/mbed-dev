@@ -42,9 +42,15 @@ else
 endif
 
 all: $(PROJECT).bin
+	mkdir -p $(OUT_DIR)
+	mv *.o $(OUT_DIR)
+	mv *.elf $(OUT_DIR)
+	mv *.bin $(OUT_DIR)
+	mv *.d $(OUT_DIR)
 
 clean:
-	rm -f $(PROJECT).bin $(PROJECT).elf $(OBJECTS) $(DEPS)
+	rm -rf $(OUT_DIR)
+#	rm -f $(PROJECT).bin $(PROJECT).elf $(OBJECTS) $(DEPS)
 
 .s.o:
 	$(AS) $(CPU) -o $@ $<
