@@ -1,4 +1,4 @@
-## mbed development environment using arm-gcc toolchain
+## mbed development workspace
 
 ### Install arm-none-eabi- toolchain on ubuntu
 
