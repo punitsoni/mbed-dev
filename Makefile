@@ -3,8 +3,10 @@
 
 GCC_BIN = /usr/bin/
 PROJECT = main
-OBJECTS = ./main.o 
-OUT_DIR = ./out/
+OBJECTS = main.o 
+OUT_DIR = out
+
+.SECONDEXPANSION:
 
 SYS_OBJECTS = $(wildcard ./mbed/TARGET_NUCLEO_F103RB/TOOLCHAIN_GCC_ARM/*.o)
 
@@ -36,32 +38,38 @@ else
   CC_FLAGS += -DNDEBUG -Os
 endif
 
-all: $(PROJECT).bin
-	mkdir -p $(OUT_DIR)
-	mv *.o $(OUT_DIR)
-	mv *.elf $(OUT_DIR)
-	mv *.bin $(OUT_DIR)
-	mv *.d $(OUT_DIR)
+all: $$(OUT_DIR)/.marker $(OUT_DIR)/$(PROJECT).bin
+	@echo Done.
 
 clean:
 	rm -rf $(OUT_DIR)
 #	rm -f $(PROJECT).bin $(PROJECT).elf $(OBJECTS) $(DEPS)
 
-.s.o:
+$(OUT_DIR)/%.o: %.s
 	$(AS) $(CPU) -o $@ $<
 
-.c.o:
-	$(CC)  $(CC_FLAGS) $(CC_SYMBOLS) -std=gnu99   $(INCLUDE_PATHS) -o $@ $<
+$(OUT_DIR)/%.o: %.c
+	@echo "[CC] $@"
+	@$(CC)  $(CC_FLAGS) $(CC_SYMBOLS) -std=gnu99   $(INCLUDE_PATHS) -o $@ $<
 
-.cpp.o:
-	$(CPP) $(CC_FLAGS) $(CC_SYMBOLS) -std=gnu++98 $(INCLUDE_PATHS) -o $@ $<
+$(OUT_DIR)/%.o: %.cpp
+	@printf "%-10s $@\n" [CPP]
+	@$(CPP) $(CC_FLAGS) $(CC_SYMBOLS) -std=gnu++98 $(INCLUDE_PATHS) -o $@ $<
 
+$(OUT_DIR)/$(PROJECT).elf: $(OUT_DIR)/$(OBJECTS) $(SYS_OBJECTS)
+	@printf "%-10s $@\n" [LD]
+	@$(LD) $(LD_FLAGS) -T$(LINKER_SCRIPT) $(LIBRARY_PATHS) -o $@ $^ \
+		$(LIBRARIES) $(LD_SYS_LIBS) $(LIBRARIES) $(LD_SYS_LIBS)
 
-$(PROJECT).elf: $(OBJECTS) $(SYS_OBJECTS)
-	$(LD) $(LD_FLAGS) -T$(LINKER_SCRIPT) $(LIBRARY_PATHS) -o $@ $^ $(LIBRARIES) $(LD_SYS_LIBS) $(LIBRARIES) $(LD_SYS_LIBS)
+$(OUT_DIR)/$(PROJECT).bin: $(OUT_DIR)/$(PROJECT).elf
+	@printf "%-10s $@\n" [OBJCOPY]
+	@$(OBJCOPY) -O binary $< $@
 
-$(PROJECT).bin: $(PROJECT).elf
-	$(OBJCOPY) -O binary $< $@
+%/.marker:
+	mkdir -p $(dir $@) 
+	touch $@
+
+.PRECIOUS: %/.marker
 
 DEPS = $(OBJECTS:.o=.d) $(SYS_OBJECTS:.o=.d)
 -include $(DEPS)

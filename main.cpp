@@ -12,4 +12,5 @@ int main() {
         myled = 0;
         wait(0.1);
     }
+    return 0;
 }
