@@ -8,7 +8,8 @@ include common.mk
 
 # List all required source files
 CPP_SRC_FILES :=
-CPP_SRC_FILES := main.cpp
+CPP_SRC_FILES += main.cpp
+CPP_SRC_FILES += apps/test1/test1.cpp
 
 SRC_FILES :=
 SRC_FILES += os/FreeRTOS/croutine.c
@@ -28,6 +29,8 @@ INC_PATHS += .
 INC_PATHS += ./mbed
 INC_PATHS += ./mbed/TARGET_NUCLEO_F103RB
 INC_PATHS += ./mbed/TARGET_NUCLEO_F103RB/TARGET_STM/TARGET_NUCLEO_F103RB
+INC_PATHS += ./apps
+
 
 # List all required lib paths
 LIB_PATHS := ./mbed/TARGET_NUCLEO_F103RB/TOOLCHAIN_GCC_ARM
