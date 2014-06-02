@@ -73,6 +73,7 @@ $(OUT_DIR)/libfrt.a: $(OBJ_FILES)
 $(OUT_DIR)/$(PROJECT).elf: $(OBJ_FILES) $(BUILT_OBJS)
 	@printf " %-10s $@\n" [LD]
 	@$(LD) $(LD_FLAGS) -T$(LD_SCRIPT) -o $@ $^ $(LD_LIB_PATHS) $(LD_LIBS)
+	@$(SIZE) $@
 
 $(OUT_DIR)/$(PROJECT).bin: $(OUT_DIR)/$(PROJECT).elf
 	@printf " %-10s $@\n" [OBJCOPY]

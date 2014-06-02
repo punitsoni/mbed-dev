@@ -8,7 +8,7 @@ CC      = arm-none-eabi-gcc
 CPP     = arm-none-eabi-g++
 LD      = arm-none-eabi-gcc
 OBJCOPY = arm-none-eabi-objcopy
-
+SIZE    = arm-none-eabi-size
 
 
 CPU = -mcpu=cortex-m3 -mthumb
